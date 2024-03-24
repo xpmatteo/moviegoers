@@ -23,9 +23,9 @@ func main() {
 	if err := godotenv.Load(".env"); err != nil {
 		log.Fatalf("Error loading .env file: %s", err)
 	}
-	readMovies()
+	readMoviesFromApi()
 	fmt.Printf("Read %d movies\n", len(data.Results))
-	
+
 	templ := template.Must(template.ParseFiles("view/index.tmpl"))
 	http.Handle("GET /{$}", handlers.Index(templ, data.Results))
 	http.Handle("GET /", http.FileServer(http.Dir("./public/")))
@@ -33,13 +33,20 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
 
-func readMovies() {
-	file, err := os.Open("movies.json")
+func readMoviesFromApi() {
+	url := "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc"
+	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-	defer file.Close()
-	bytes, err := io.ReadAll(file)
+	request.Header.Add("accept", "application/json")
+	request.Header.Add("Authorization", "Bearer "+os.Getenv("TMDB_ACCESS_TOKEN"))
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	bytes, err := io.ReadAll(response.Body)
 	if err != nil {
 		log.Fatal(err)
 	}
