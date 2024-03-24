@@ -2,11 +2,11 @@ package web
 
 import (
 	"bytes"
-	"demo-template-test/todo"
 	"encoding/xml"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/xpmatteo/gomovies/model"
 	"golang.org/x/net/html"
 	"html/template"
 	"io"
@@ -14,66 +14,35 @@ import (
 	"testing"
 )
 
+const indexFilename = "index.html"
+
 var testCases = []struct {
 	name     string
-	model    *todo.List
+	movies   []*model.Movie
 	path     string
 	selector string
 	matches  []string
 }{
 	{
-		name: "all todo items are shown",
-		model: todo.NewList().
-			Add("Foo").
-			Add("Bar"),
-		selector: "ul.todo-list li",
-		matches:  []string{"Foo", "Bar"},
-	},
-	{
-		name: "completed items get the 'completed' class",
-		model: todo.NewList().
-			Add("Foo").
-			AddCompleted("Bar"),
-		selector: "ul.todo-list li.completed",
-		matches:  []string{"Bar"},
-	},
-	{
-		name: "items left",
-		model: todo.NewList().
-			Add("One").
-			Add("Two").
-			AddCompleted("Three"),
-		selector: "span.todo-count",
-		matches:  []string{"2 items left"},
-	},
-	{
-		name:     "highlighted navigation link: All",
-		path:     "/",
-		selector: "ul.filters a.selected",
-		matches:  []string{"All"},
-	},
-	{
-		name:     "highlighted navigation link: Active",
-		path:     "/active",
-		selector: "ul.filters a.selected",
-		matches:  []string{"Active"},
-	},
-	{
-		name:     "highlighted navigation link: Completed",
-		path:     "/completed",
-		selector: "ul.filters a.selected",
-		matches:  []string{"Completed"},
+		name: "all movies are shown",
+		movies: []*model.Movie{
+			{Title: "Foobar"},
+			{Title: "Zork"},
+			{Title: "Blah"},
+		},
+		selector: "#movieGrid .movie h3",
+		matches:  []string{"Foobar", "Zork", "Blah"},
 	},
 }
 
 func Test_allDynamicFeatures(t *testing.T) {
 	for _, test := range testCases {
 		t.Run(test.name, func(t *testing.T) {
-			if test.model == nil {
-				test.model = todo.NewList()
+			if test.movies == nil {
+				test.movies = []*model.Movie{}
 			}
 
-			buf := renderTemplate(test.model, test.path)
+			buf := renderTemplate(test.movies, test.path)
 
 			assertWellFormedHTML(t, buf)
 			document := parseHtml(t, buf)
@@ -101,12 +70,12 @@ func parseHtml(t *testing.T, buf bytes.Buffer) *goquery.Document {
 	return document
 }
 
-func renderTemplate(model *todo.List, path string) bytes.Buffer {
-	templ := template.Must(template.ParseFiles("index.gotmpl"))
+func renderTemplate(movies []*model.Movie, path string) bytes.Buffer {
+	templ := template.Must(template.ParseFiles(indexFilename))
 	var buf bytes.Buffer
 	data := map[string]any{
-		"model": model,
-		"path":  path,
+		"movies": movies,
+		"path":   path,
 	}
 	err := templ.Execute(&buf, data)
 	if err != nil {
