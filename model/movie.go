@@ -1,5 +1,5 @@
 package model
 
 type Movie struct {
-	Title string
+	Title, Overview string
 }

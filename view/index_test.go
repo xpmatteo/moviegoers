@@ -24,7 +24,7 @@ var testCases = []struct {
 	matches  []string
 }{
 	{
-		name: "all movies are shown",
+		name: "movie titles",
 		movies: []*model.Movie{
 			{Title: "Foobar"},
 			{Title: "Zork"},
@@ -32,6 +32,15 @@ var testCases = []struct {
 		},
 		selector: "#movieGrid .movie h3",
 		matches:  []string{"Foobar", "Zork", "Blah"},
+	},
+	{
+		name: "movie overviews",
+		movies: []*model.Movie{
+			{Overview: "Something"},
+			{Overview: "Something else"},
+		},
+		selector: "#movieGrid .movie .overview",
+		matches:  []string{"Something", "Something else"},
 	},
 }
 
