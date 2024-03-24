@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MovieGoers</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <div class="sidebar">
+      <h2>Genres</h2>
+      <form id="genreForm">
+        <label><input type="radio" name="genre" value="all" checked> All</label><br>
+        <label><input type="radio" name="genre" value="action"> Action</label><br>
+        <label><input type="radio" name="genre" value="comedy"> Comedy</label><br>
+        <label><input type="radio" name="genre" value="thriller"> Thriller</label><br>
+        <!-- Add more genres as needed -->
+        <input type="submit" name="submit" value="Choose">
+      </form>
+    </div>
+    <div class="main">
+      <h1>Movie List</h1>
+      <div class="grid-container" id="movieGrid">
+        <div class="movie">
+          <img src="poster_action_movie.jpg" alt="Action Movie">
+          <h3>Action Movie</h3>
+          <p>Description of the action movie.</p>
+        </div>
+        <div class="movie">
+          <img src="poster_comedy_movie.jpg" alt="Comedy Movie">
+          <h3>Comedy Movie</h3>
+          <p>Description of the comedy movie.</p>
+        </div>
+        <div class="movie">
+          <img src="poster_thriller_movie.jpg" alt="Thriller Movie">
+          <h3>Thriller Movie</h3>
+          <p>Description of the thriller movie.</p>
+        </div>
+        <!-- Add more movies here -->
+      </div>
+    </div>
+  </div>
+</body>
+</html>
