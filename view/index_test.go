@@ -1,4 +1,4 @@
-package web
+package view
 
 import (
 	"bytes"
@@ -13,8 +13,6 @@ import (
 	"strings"
 	"testing"
 )
-
-const indexFilename = "index.gotmpl"
 
 var testCases = []struct {
 	name     string
@@ -79,20 +77,6 @@ func parseHtml(t *testing.T, buf bytes.Buffer) *goquery.Document {
 	return document
 }
 
-func renderTemplate(movies []*model.Movie, path string) bytes.Buffer {
-	templ := template.Must(template.ParseFiles(indexFilename))
-	var buf bytes.Buffer
-	data := map[string]any{
-		"movies": movies,
-		"path":   path,
-	}
-	err := templ.Execute(&buf, data)
-	if err != nil {
-		panic(err)
-	}
-	return buf
-}
-
 func assertWellFormedHTML(t *testing.T, buf bytes.Buffer) {
 	decoder := xml.NewDecoder(bytes.NewReader(buf.Bytes()))
 	decoder.Strict = false
@@ -110,4 +94,20 @@ func assertWellFormedHTML(t *testing.T, buf bytes.Buffer) {
 			t.Fatalf("error parsing html: %s", err)
 		}
 	}
+}
+
+const indexFilename = "index.gotmpl"
+
+func renderTemplate(movies []*model.Movie, path string) bytes.Buffer {
+	templ := template.Must(template.ParseFiles(indexFilename))
+	var buf bytes.Buffer
+	data := map[string]any{
+		"movies": movies,
+		"path":   path,
+	}
+	err := templ.Execute(&buf, data)
+	if err != nil {
+		panic(err)
+	}
+	return buf
 }
