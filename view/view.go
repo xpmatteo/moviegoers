@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func Render(w http.ResponseWriter, r *http.Request, templ *template.Template, movies []*model.Movie) {
+func Render(w http.ResponseWriter, r *http.Request, templ *template.Template, movies []model.Movie) {
 	data := map[string]any{
 		"movies": movies,
 		"path":   "/",

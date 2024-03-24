@@ -1,5 +1,6 @@
 package model
 
 type Movie struct {
-	Title, Overview string
+	Title    string `json:"title"`
+	Overview string `json:"overview"`
 }

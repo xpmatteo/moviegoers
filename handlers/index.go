@@ -7,25 +7,7 @@ import (
 	"net/http"
 )
 
-func Index(templ *template.Template) http.Handler {
-	movies := []*model.Movie{
-		{
-			Title:    "ABC",
-			Overview: "AHA OHO",
-		},
-		{
-			Title:    "ABC",
-			Overview: "AHA OHO",
-		},
-		{
-			Title:    "ABC",
-			Overview: "AHA OHO",
-		},
-		{
-			Title:    "ABC",
-			Overview: "AHA OHO",
-		},
-	}
+func Index(templ *template.Template, movies []model.Movie) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		view.Render(w, r, templ, movies)
 	})

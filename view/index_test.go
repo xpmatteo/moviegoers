@@ -16,14 +16,14 @@ import (
 
 var testCases = []struct {
 	name     string
-	movies   []*model.Movie
+	movies   []model.Movie
 	path     string
 	selector string
 	matches  []string
 }{
 	{
 		name: "movie titles",
-		movies: []*model.Movie{
+		movies: []model.Movie{
 			{Title: "Foobar"},
 			{Title: "Zork"},
 			{Title: "Blah"},
@@ -33,7 +33,7 @@ var testCases = []struct {
 	},
 	{
 		name: "movie overviews",
-		movies: []*model.Movie{
+		movies: []model.Movie{
 			{Overview: "Something"},
 			{Overview: "Something else"},
 		},
@@ -46,7 +46,7 @@ func Test_allDynamicFeatures(t *testing.T) {
 	for _, test := range testCases {
 		t.Run(test.name, func(t *testing.T) {
 			if test.movies == nil {
-				test.movies = []*model.Movie{}
+				test.movies = []model.Movie{}
 			}
 
 			buf := renderTemplate(test.movies, test.path)
@@ -98,7 +98,7 @@ func assertWellFormedHTML(t *testing.T, buf bytes.Buffer) {
 
 const indexFilename = "index.gotmpl"
 
-func renderTemplate(movies []*model.Movie, path string) bytes.Buffer {
+func renderTemplate(movies []model.Movie, path string) bytes.Buffer {
 	templ := template.Must(template.ParseFiles(indexFilename))
 	var buf bytes.Buffer
 	data := map[string]any{
