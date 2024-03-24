@@ -25,7 +25,11 @@
       <div class="grid-container" id="movieGrid">
         {{ range .movies }}
         <div class="movie">
-          <img src="https://image.tmdb.org/t/p/w185/{{.PosterPath}}" alt="Movie poster">
+          {{ if .PosterPath }}
+            <img src="https://image.tmdb.org/t/p/w185/{{.PosterPath}}" alt="Movie poster">
+          {{ else }}
+            <img src="images/no_poster_available.jpg" alt="Movie poster missing">
+          {{end}}
           <h3>{{.Title}}</h3>
           <p class="overview">{{.Overview}}</p>
         </div>

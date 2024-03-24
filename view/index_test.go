@@ -15,11 +15,13 @@ import (
 )
 
 var testCases = []struct {
-	name     string
-	movies   []model.Movie
-	path     string
-	selector string
-	matches  []string
+	name                   string
+	movies                 []model.Movie
+	path                   string
+	selector               string
+	matches                []string
+	attribute              string
+	expectedAttributeValue string
 }{
 	{
 		name: "movie titles",
@@ -40,6 +42,24 @@ var testCases = []struct {
 		selector: "#movieGrid .movie .overview",
 		matches:  []string{"Something", "Something else"},
 	},
+	{
+		name: "poster",
+		movies: []model.Movie{
+			{PosterPath: "foo.jpg"},
+		},
+		selector:               "#movieGrid .movie img",
+		attribute:              "src",
+		expectedAttributeValue: "https://image.tmdb.org/t/p/w185/foo.jpg",
+	},
+	{
+		name: "poster missing",
+		movies: []model.Movie{
+			{PosterPath: ""},
+		},
+		selector:               "#movieGrid .movie img",
+		attribute:              "src",
+		expectedAttributeValue: "images/no_poster_available.jpg",
+	},
 }
 
 func Test_allDynamicFeatures(t *testing.T) {
@@ -47,6 +67,9 @@ func Test_allDynamicFeatures(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			if test.movies == nil {
 				test.movies = []model.Movie{}
+			}
+			if test.matches == nil {
+				test.matches = []string{""}
 			}
 
 			buf := renderTemplate(test.movies, test.path)
@@ -58,8 +81,22 @@ func Test_allDynamicFeatures(t *testing.T) {
 			for i, node := range selection.Nodes {
 				assert.Equal(t, test.matches[i], text(node))
 			}
+			if test.attribute != "" {
+				node := selection.Nodes[0]
+				attributeValue := findAttributeValue(node, test.attribute)
+				assert.Equal(t, test.expectedAttributeValue, attributeValue)
+			}
 		})
 	}
+}
+
+func findAttributeValue(node *html.Node, attribute string) string {
+	for _, a := range node.Attr {
+		if a.Key == attribute {
+			return a.Val
+		}
+	}
+	return ""
 }
 
 func text(node *html.Node) string {
