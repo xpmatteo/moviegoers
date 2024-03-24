@@ -14,7 +14,7 @@ import (
 	"testing"
 )
 
-const indexFilename = "index.html"
+const indexFilename = "index.gotmpl"
 
 var testCases = []struct {
 	name     string

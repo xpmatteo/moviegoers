@@ -20,24 +20,15 @@
       </form>
     </div>
     <div class="main">
-      <h1>Movie List</h1>
+      <h1>Movies</h1>
       <div class="grid-container" id="movieGrid">
+        {{ range .movies }}
         <div class="movie">
           <img src="poster_action_movie.jpg" alt="Action Movie">
-          <h3>Action Movie</h3>
+          <h3>{{.Title}}</h3>
           <p>Description of the action movie.</p>
         </div>
-        <div class="movie">
-          <img src="poster_comedy_movie.jpg" alt="Comedy Movie">
-          <h3>Comedy Movie</h3>
-          <p>Description of the comedy movie.</p>
-        </div>
-        <div class="movie">
-          <img src="poster_thriller_movie.jpg" alt="Thriller Movie">
-          <h3>Thriller Movie</h3>
-          <p>Description of the thriller movie.</p>
-        </div>
-        <!-- Add more movies here -->
+        {{ end }}
       </div>
     </div>
   </div>
