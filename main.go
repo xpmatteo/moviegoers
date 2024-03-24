@@ -26,7 +26,7 @@ func main() {
 	}
 
 	var data struct {
-		results []model.Movie
+		Results []model.Movie `json:"Results"`
 	}
 
 	err = json.Unmarshal(bytes, &data)
@@ -34,9 +34,9 @@ func main() {
 		fmt.Println("Error:", err)
 		return
 	}
-	fmt.Printf("Read %d movies\n", len(data.results))
-	templ := template.Must(template.ParseFiles("view/index.gotmpl"))
-	http.Handle("GET /{$}", handlers.Index(templ, data.results))
+	fmt.Printf("Read %d movies\n", len(data.Results))
+	templ := template.Must(template.ParseFiles("view/index.tmpl"))
+	http.Handle("GET /{$}", handlers.Index(templ, data.Results))
 	http.Handle("GET /", http.FileServer(http.Dir("./public/")))
 	log.Print("Serving HTTP from port ", port)
 	log.Panic(http.ListenAndServe(":"+port, nil))

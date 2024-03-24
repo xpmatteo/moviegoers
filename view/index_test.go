@@ -96,7 +96,7 @@ func assertWellFormedHTML(t *testing.T, buf bytes.Buffer) {
 	}
 }
 
-const indexFilename = "index.gotmpl"
+const indexFilename = "index.tmpl"
 
 func renderTemplate(movies []model.Movie, path string) bytes.Buffer {
 	templ := template.Must(template.ParseFiles(indexFilename))
