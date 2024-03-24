@@ -25,7 +25,7 @@
       <div class="grid-container" id="movieGrid">
         {{ range .movies }}
         <div class="movie">
-          <img src="images/no_poster_available.jpg" alt="No poster available">
+          <img src="https://image.tmdb.org/t/p/w185/{{.PosterPath}}" alt="Movie poster">
           <h3>{{.Title}}</h3>
           <p class="overview">{{.Overview}}</p>
         </div>
