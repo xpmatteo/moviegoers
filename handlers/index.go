@@ -5,6 +5,7 @@ import (
 	"github.com/xpmatteo/gomovies/view"
 	"html/template"
 	"net/http"
+	"strconv"
 )
 
 type MovieRepository interface {
@@ -13,6 +14,13 @@ type MovieRepository interface {
 
 func Index(templ *template.Template, repo MovieRepository) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		view.Render(w, r, templ, repo.Query(model.QueryOptions{}))
+		page, err := strconv.Atoi(r.URL.Query().Get("page"))
+		if err != nil {
+			page = 1
+		}
+		options := model.QueryOptions{
+			Page: page,
+		}
+		view.Render(w, r, templ, repo.Query(options))
 	})
 }

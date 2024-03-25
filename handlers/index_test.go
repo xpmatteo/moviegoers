@@ -13,34 +13,41 @@ type MockRepository struct {
 	willReturnMovies []model.Movie
 }
 
+var passedOptions model.QueryOptions
+
 func (repo MockRepository) Query(opts model.QueryOptions) []model.Movie {
+	passedOptions = opts
 	return repo.willReturnMovies
 }
 
-func Test_indexx(t *testing.T) {
+func Test_index(t *testing.T) {
 	tests := []struct {
-		name     string
-		template string
-		url      string
-		expected string
+		name                 string
+		template             string
+		url                  string
+		expectedBody         string
+		expectedQueryOptions model.QueryOptions
 	}{
 		{
-			name:     "movies",
-			template: "{{ .movies }}",
-			url:      "/",
-			expected: "[]",
+			name:                 "movies",
+			template:             "{{ .movies }}",
+			url:                  "/",
+			expectedBody:         "[]",
+			expectedQueryOptions: model.QueryOptions{Page: 1},
 		},
 		{
-			name:     "nextPage",
-			template: "{{.nextPage}}",
-			url:      "/?page=7",
-			expected: "8",
+			name:                 "nextPage",
+			template:             "{{.nextPage}}",
+			url:                  "/?page=7",
+			expectedBody:         "8",
+			expectedQueryOptions: model.QueryOptions{Page: 7},
 		},
 		{
-			name:     "nextPage default",
-			template: "{{.nextPage}}",
-			url:      "/",
-			expected: "2",
+			name:                 "nextPage default",
+			template:             "{{.nextPage}}",
+			url:                  "/",
+			expectedBody:         "2",
+			expectedQueryOptions: model.QueryOptions{Page: 1},
 		},
 	}
 	for _, test := range tests {
@@ -52,7 +59,19 @@ func Test_indexx(t *testing.T) {
 
 			Index(templ, repo).ServeHTTP(w, r)
 
-			assert.Equal(t, test.expected, w.Body.String())
+			assert.Equal(t, test.expectedBody, w.Body.String())
+			assert.Equal(t, test.expectedQueryOptions, passedOptions)
 		})
 	}
+}
+
+func Test_passOptionsToRepo(t *testing.T) {
+	templ := template.Must(template.New("index").Parse(""))
+	repo := MockRepository{}
+	w := httptest.NewRecorder()
+	r := httptest.NewRequest(http.MethodGet, "/?page=4", nil)
+
+	Index(templ, repo).ServeHTTP(w, r)
+
+	assert.Equal(t, 4, passedOptions.Page)
 }
