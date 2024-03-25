@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"testing"
+	"time"
 )
 
 func Test_queryString(t *testing.T) {
@@ -34,6 +35,11 @@ func Test_queryString(t *testing.T) {
 			name:     "genre & page",
 			opts:     model.QueryOptions{Genre: 44, Page: 2},
 			expected: "with_genres=44&page=2",
+		},
+		{
+			name:     "release date",
+			opts:     model.QueryOptions{ReleaseDateMax: time.Date(2024, 1, 22, 0, 0, 0, 0, time.Local)},
+			expected: "primary_release_date.lte=2024-01-22",
 		},
 	}
 	for _, test := range tests {

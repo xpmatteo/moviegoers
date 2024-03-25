@@ -22,6 +22,13 @@ func QueryString(o model.QueryOptions) string {
 	if o.Page != 0 {
 		params = append(params, fmt.Sprintf("page=%d", o.Page))
 	}
+	if !o.ReleaseDateMax.IsZero() {
+		s := fmt.Sprintf("primary_release_date.lte=%d-%02d-%02d",
+			o.ReleaseDateMax.Year(),
+			o.ReleaseDateMax.Month(),
+			o.ReleaseDateMax.Day())
+		params = append(params, s)
+	}
 	return strings.Join(params, "&")
 }
 
