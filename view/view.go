@@ -7,12 +7,16 @@ import (
 )
 
 func Render(w http.ResponseWriter, r *http.Request, templ *template.Template, movies []model.Movie) {
-	data := map[string]any{
-		"movies": movies,
-		"path":   "/",
-	}
+	data := Model(movies, r)
 	err := templ.Execute(w, data)
 	if err != nil {
 		panic(err)
 	}
+}
+
+func Model(movies []model.Movie, r *http.Request) map[string]any {
+	data := map[string]any{
+		"movies": movies,
+	}
+	return data
 }

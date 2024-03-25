@@ -37,9 +37,12 @@ func (m *Mtdb) Query(opts model.QueryOptions) []model.Movie {
 	if apiKey == "" {
 		panic("missing env var TMDB_ACCESS_TOKEN")
 	}
-	url := "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc"
-	url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&primary_release_date.lte=2024-03-24&sort_by=primary_release_date.desc"
-	url = "https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&primary_release_date.lte=2024-03-24&sort_by=primary_release_date.desc&vote_count.gte=100"
+	url := "https://api.themoviedb.org/3/discover/movie?" +
+		"include_adult=false&" +
+		"include_video=false&" +
+		"language=en-US&" +
+		"sort_by=popularity.desc&" +
+		QueryString(opts)
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		log.Print(err)

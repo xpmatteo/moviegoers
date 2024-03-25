@@ -10,6 +10,8 @@ import (
 	"golang.org/x/net/html"
 	"html/template"
 	"io"
+	"net/http"
+	"net/http/httptest"
 	"strings"
 	"testing"
 )
@@ -138,10 +140,10 @@ const indexFilename = "index.tmpl"
 func renderTemplate(movies []model.Movie, path string) bytes.Buffer {
 	templ := template.Must(template.ParseFiles(indexFilename))
 	var buf bytes.Buffer
-	data := map[string]any{
-		"movies": movies,
-		"path":   path,
+	if path == "" {
+		path = "/"
 	}
+	data := Model(movies, httptest.NewRequest(http.MethodGet, path, nil))
 	err := templ.Execute(&buf, data)
 	if err != nil {
 		panic(err)
