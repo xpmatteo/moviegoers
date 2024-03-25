@@ -41,6 +41,8 @@ body, html {
 .movie img {
   max-width: 100%;
   height: auto;
+  margin: auto;
+  display: block;
 }
 
 .movie h3 {
