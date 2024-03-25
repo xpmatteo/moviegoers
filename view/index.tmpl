@@ -6,25 +6,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MovieGoers</title>
   <link rel="stylesheet" href="style.css">
+  <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+  <script src="https://unpkg.com/htmx.org@1.9.11" integrity="sha384-0gxUXCCR8yv9FM2b+U3FDbsKthCI66oH5IA9fHppQq9DDMHuMauqq1ZHBpJxQ0J0" crossorigin="anonymous"></script>
 </head>
 <body>
   <div class="container">
     <div class="sidebar">
       <h2>Genres</h2>
-      <form id="genreForm">
+      <form id="genreForm" action="/">
         <label><input type="radio" name="genre" value="all" checked> All</label><br>
-        <label><input type="radio" name="genre" value="action"> Action</label><br>
-        <label><input type="radio" name="genre" value="comedy"> Comedy</label><br>
-        <label><input type="radio" name="genre" value="thriller"> Thriller</label><br>
-        <!-- Add more genres as needed -->
-        <input type="submit" name="submit" value="Choose">
+        {{ range .genres }}
+        <label><input type="radio" name="genre" value="{{.Id}}"> {{.Name}}</label><br>
+        {{ end }}
+        <input type="submit" value="Choose">
       </form>
     </div>
     <div class="main">
       <h1>Movies</h1>
       <div class="grid-container" id="movieGrid">
-        {{ range .movies }}
-        <div class="movie">
+        {{  range $index, $movie := .movies }}
+        <div
+                class="movie"
+                {{ if eq 19 $index }}
+                  data-hx-get="/?page={{$.nextPage}}"
+                  data-hx-trigger="revealed"
+                  data-hx-swap="afterend"
+                  data-hx-select="#movieGrid .movie"
+                {{end}}
+        >
           {{ if .PosterPath }}
             <img src="https://image.tmdb.org/t/p/w185/{{.PosterPath}}" alt="Movie poster">
           {{ else }}
@@ -35,7 +44,7 @@
         </div>
         {{ end }}
       </div>
-      <a href="/?page={{.nextPage}}">More movies...</a>
+      <a id="moreMovies" href="/?page={{.nextPage}}">More movies...</a>
     </div>
   </div>
 </body>

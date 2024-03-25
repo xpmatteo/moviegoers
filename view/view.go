@@ -23,6 +23,7 @@ func Model(movies []model.Movie, r *http.Request) map[string]any {
 	data := map[string]any{
 		"movies":   movies,
 		"nextPage": thisPage + 1,
+		"genres":   model.Genres,
 	}
 	return data
 }
