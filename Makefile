@@ -14,9 +14,10 @@ server:
 open:
 	open http://localhost:8080
 
+M=github.com/xpmatteo/gomovies
 depgraph:
-	godepgraph -s -onlyprefixes github.com/xpmatteo/gomovies \
-		github.com/xpmatteo/gomovies \
+	godepgraph -s -onlyprefixes $(M) $(M) \
+		| sed -e s@$(M)/@@g -e s@$(M)@main@g -e s/splines=ortho/splines=curved/ \
 		| dot -Tpng -o /tmp/godepgraph.png \
 		&& open /tmp/godepgraph.png
 

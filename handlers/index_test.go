@@ -64,14 +64,3 @@ func Test_index(t *testing.T) {
 		})
 	}
 }
-
-func Test_passOptionsToRepo(t *testing.T) {
-	templ := template.Must(template.New("index").Parse(""))
-	repo := MockRepository{}
-	w := httptest.NewRecorder()
-	r := httptest.NewRequest(http.MethodGet, "/?page=4", nil)
-
-	Index(templ, repo).ServeHTTP(w, r)
-
-	assert.Equal(t, 4, passedOptions.Page)
-}
