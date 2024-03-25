@@ -12,14 +12,16 @@
 <body>
   <div class="container">
     <div class="sidebar">
-      <h2>Genres</h2>
-      <form id="genreForm" action="/">
-        <label><input type="radio" name="genre" value="all" checked> All</label><br>
-        {{ range .genres }}
-        <label><input type="radio" name="genre" value="{{.Id}}"> {{.Name}}</label><br>
-        {{ end }}
-        <input type="submit" value="Choose">
-      </form>
+      <div id="genres">
+        <h2>Genres</h2>
+        <form action="/">
+          <label><input type="radio" name="genre" value="all" checked> All</label><br>
+          {{ range .genres }}
+            <label><input type="radio" name="genre" value="{{.Id}}"> {{.Name}}</label><br>
+          {{ end }}
+          <input type="submit" value="Choose">
+        </form>
+      </div>
     </div>
     <div class="main">
       <h1>Movies</h1>

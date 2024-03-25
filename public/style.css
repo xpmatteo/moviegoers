@@ -50,6 +50,10 @@ body, html {
   margin-bottom: 10px;
 }
 
+#genres {
+  position: fixed;
+}
+
 /* Media query for responsive layout */
 @media screen and (max-width: 768px) {
   .container {
