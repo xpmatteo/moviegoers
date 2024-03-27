@@ -11,7 +11,12 @@ import (
 	"strings"
 )
 
+type HttpAgent interface {
+	Do(req *http.Request) (*http.Response, error)
+}
+
 type Mtdb struct {
+	Agent HttpAgent
 }
 
 func QueryString(o model.QueryOptions) string {
@@ -49,7 +54,7 @@ func (m *Mtdb) Query(opts model.QueryOptions) []model.Movie {
 	}
 	request.Header.Add("accept", "application/json")
 	request.Header.Add("Authorization", "Bearer "+apiKey)
-	response, err := http.DefaultClient.Do(request)
+	response, err := m.Agent.Do(request)
 	if err != nil {
 		log.Print(err)
 	}

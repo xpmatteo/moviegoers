@@ -5,6 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/xpmatteo/gomovies/model"
 	"log"
+	"net/http"
 	"os"
 	"testing"
 	"time"
@@ -49,7 +50,7 @@ func Test_queryString(t *testing.T) {
 	}
 }
 
-var m Mtdb
+var m = Mtdb{Agent: http.DefaultClient}
 
 func Test_live(t *testing.T) {
 	if err := godotenv.Load("../.env"); err != nil {
