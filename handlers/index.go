@@ -18,9 +18,17 @@ func Index(templ *template.Template, repo MovieRepository) http.Handler {
 		if err != nil {
 			page = 1
 		}
-		options := model.QueryOptions{
-			Page: page,
+		genre, err := strconv.Atoi(r.URL.Query().Get("genre"))
+		if err != nil {
+			genre = 0
 		}
-		view.Render(w, r, templ, repo.Query(options))
+		options := model.QueryOptions{
+			Page:  page,
+			Genre: genre,
+		}
+		data := view.Model(repo.Query(options), options)
+		if err := templ.Execute(w, data); err != nil {
+			panic(err)
+		}
 	})
 }

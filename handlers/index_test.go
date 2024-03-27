@@ -49,6 +49,20 @@ func Test_index(t *testing.T) {
 			expectedBody:         "2",
 			expectedQueryOptions: model.QueryOptions{Page: 1},
 		},
+		{
+			name:                 "genre",
+			template:             "{{.genre}}",
+			url:                  "/?genre=123",
+			expectedBody:         "123",
+			expectedQueryOptions: model.QueryOptions{Page: 1, Genre: 123},
+		},
+		{
+			name:                 "genre default",
+			template:             "{{.genre}}",
+			url:                  "/",
+			expectedBody:         "0",
+			expectedQueryOptions: model.QueryOptions{Page: 1, Genre: 0},
+		},
 	}
 	for _, test := range tests {
 		t.Run(test.name, func(t *testing.T) {

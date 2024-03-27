@@ -16,6 +16,7 @@
         <h2>Genres</h2>
         <form action="/">
           <label><input type="radio" name="genre" value="all" checked> All</label><br>
+          <br>
           {{ range .genres }}
             <label><input type="radio" name="genre" value="{{.Id}}"> {{.Name}}</label><br>
           {{ end }}

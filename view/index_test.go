@@ -10,8 +10,6 @@ import (
 	"golang.org/x/net/html"
 	"html/template"
 	"io"
-	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
 )
@@ -19,7 +17,7 @@ import (
 var testCases = []struct {
 	name                   string
 	movies                 []model.Movie
-	path                   string
+	options                model.QueryOptions
 	selector               string
 	matches                []string
 	attribute              string
@@ -74,7 +72,7 @@ func Test_allDynamicFeatures(t *testing.T) {
 				test.matches = []string{""}
 			}
 
-			buf := renderTemplate(test.movies, test.path)
+			buf := renderTemplate(test.movies, test.options)
 
 			assertWellFormedHTML(t, buf)
 			document := parseHtml(t, buf)
@@ -137,13 +135,10 @@ func assertWellFormedHTML(t *testing.T, buf bytes.Buffer) {
 
 const indexFilename = "index.tmpl"
 
-func renderTemplate(movies []model.Movie, path string) bytes.Buffer {
+func renderTemplate(movies []model.Movie, opts model.QueryOptions) bytes.Buffer {
 	templ := template.Must(template.ParseFiles(indexFilename))
 	var buf bytes.Buffer
-	if path == "" {
-		path = "/"
-	}
-	data := Model(movies, httptest.NewRequest(http.MethodGet, path, nil))
+	data := Model(movies, opts)
 	err := templ.Execute(&buf, data)
 	if err != nil {
 		panic(err)
