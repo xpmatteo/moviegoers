@@ -51,14 +51,14 @@ func Test_index(t *testing.T) {
 		},
 		{
 			name:                 "genre",
-			template:             "{{.genre}}",
+			template:             "{{.selectedGenre}}",
 			url:                  "/?genre=123",
 			expectedBody:         "123",
 			expectedQueryOptions: model.QueryOptions{Page: 1, Genre: 123},
 		},
 		{
 			name:                 "genre default",
-			template:             "{{.genre}}",
+			template:             "{{.selectedGenre}}",
 			url:                  "/",
 			expectedBody:         "0",
 			expectedQueryOptions: model.QueryOptions{Page: 1, Genre: 0},
