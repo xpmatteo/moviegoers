@@ -68,15 +68,32 @@ var testCases = []struct {
 	},
 	{
 		name:        "genre specified",
-		requestPath: "/?genre=123",
+		requestPath: "/?genre=35",
 		expectedTmdbQuery: baseQuery +
-			"&with_genres=123" +
+			"&with_genres=35" +
 			"&page=1" +
 			"&primary_release_date.lte=2024-03-02",
 		returnedMovies: make([]model.Movie, 20),
 		assertions: func(t *testing.T, document *goquery.Document) {
-			assert.Equal(t, "/?page=2&genre=123", attribute(document, "#movieGrid .movie:nth-of-type(20)", "data-hx-get"))
-			assert.Equal(t, "/?page=2&genre=123", attribute(document, "a#moreMovies", "href"))
+			assert.Equal(t, "/?page=2&genre=35", attribute(document, "#movieGrid .movie:nth-of-type(20)", "data-hx-get"))
+			assert.Equal(t, "/?page=2&genre=35", attribute(document, "a#moreMovies", "href"))
+			assert.False(t, attributePresent(document, "#genres [value=\"0\"]", "checked"))
+			assert.False(t, attributePresent(document, "#genres [value=\"18\"]", "checked"))
+			assert.True(t, attributePresent(document, "#genres [value=\"35\"]", "checked"))
+		},
+	},
+	{
+		name:        "no genre specified",
+		requestPath: "/",
+		expectedTmdbQuery: baseQuery +
+			"&page=1" +
+			"&primary_release_date.lte=2024-03-02",
+		returnedMovies: make([]model.Movie, 20),
+		assertions: func(t *testing.T, document *goquery.Document) {
+			assert.Equal(t, "/?page=2&genre=0", attribute(document, "#movieGrid .movie:nth-of-type(20)", "data-hx-get"))
+			assert.Equal(t, "/?page=2&genre=0", attribute(document, "a#moreMovies", "href"))
+			assert.True(t, attributePresent(document, "#genres [value=\"0\"]", "checked"))
+			assert.False(t, attributePresent(document, "#genres [value=\"18\"]", "checked"))
 		},
 	},
 }
@@ -90,6 +107,11 @@ func attribute(document *goquery.Document, selector, attribute string) string {
 		val = ""
 	}
 	return val
+}
+
+func attributePresent(document *goquery.Document, selector, attribute string) bool {
+	_, exists := document.Find(selector).Attr(attribute)
+	return exists
 }
 
 // mockMtdb is a fake http client that we use to snoop the url that we would be

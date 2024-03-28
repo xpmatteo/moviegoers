@@ -15,10 +15,10 @@
       <div id="genres">
         <h2>Genres</h2>
         <form action="/">
-          <label><input type="radio" name="genre" value="all" checked> All</label><br>
+          <label><input type="radio" name="genre" value="0" {{if eq 0 $.selectedGenre}} checked="checked" {{end}}> All</label><br>
           <br>
           {{ range .genres }}
-            <label><input type="radio" name="genre" value="{{.Id}}"> {{.Name}}</label><br>
+            <label><input type="radio" name="genre" value="{{.Id}}" {{if eq .Id $.selectedGenre}} checked="checked" {{end}}> {{.Name}}</label><br>
           {{ end }}
           <input type="submit" value="Choose">
         </form>
