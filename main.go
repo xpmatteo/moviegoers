@@ -14,7 +14,7 @@ var templ = template.Must(template.ParseFiles("view/index.tmpl"))
 
 func main() {
 	if err := godotenv.Load(".env"); err != nil {
-		log.Fatalf("Error loading .env file: %s", err)
+		log.Printf("Error loading .env file: %s", err)
 	}
 
 	http.Handle("GET /{$}", handlers.Index(templ, &adapters.Mtdb{Agent: http.DefaultClient}, handlers.DefaultCalendar))
