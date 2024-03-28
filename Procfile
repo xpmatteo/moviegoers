@@ -1,1 +1,1 @@
-web: ./moviegoers
+web: ./bin/gomovies
