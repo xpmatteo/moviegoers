@@ -16,6 +16,8 @@ import (
 	"testing"
 )
 
+const baseQuery = "include_adult=false&include_video=false&language=en-US&sort_by=popularity.desc"
+
 var testCases = []struct {
 	name              string
 	requestPath       string
@@ -24,19 +26,23 @@ var testCases = []struct {
 	assertions        func(*testing.T, *goquery.Document)
 }{
 	{
-		name:              "default",
-		requestPath:       "/",
-		expectedTmdbQuery: "include_adult=false&include_video=false&language=en-US&sort_by=popularity.desc&page=1",
-		returnedMovies:    make([]model.Movie, 20),
+		name:        "default",
+		requestPath: "/",
+		expectedTmdbQuery: baseQuery +
+			"&page=1" +
+			"&primary_release_date.lte=2024-03-02",
+		returnedMovies: make([]model.Movie, 20),
 		assertions: func(t *testing.T, document *goquery.Document) {
 			assert.Equal(t, "/?page=2", attribute(document, "a#moreMovies", "href"))
 		},
 	},
 	{
-		name:              "all genres page 2",
-		requestPath:       "/?page=2",
-		expectedTmdbQuery: "include_adult=false&include_video=false&language=en-US&sort_by=popularity.desc&page=2",
-		returnedMovies:    make([]model.Movie, 20),
+		name:        "all genres page 2",
+		requestPath: "/?page=2",
+		expectedTmdbQuery: baseQuery +
+			"&page=2" +
+			"&primary_release_date.lte=2024-03-02",
+		returnedMovies: make([]model.Movie, 20),
 		assertions: func(t *testing.T, document *goquery.Document) {
 			assert.Equal(t, "/?page=3", attribute(document, "a#moreMovies", "href"))
 		},
@@ -89,7 +95,7 @@ func TestEndToEnd(t *testing.T) {
 				toBeReturned:  test.returnedMovies,
 				t:             t,
 			}
-			handlers.Index(templ, &adapters.Mtdb{Agent: &mockAgent}).ServeHTTP(w, r)
+			handlers.Index(templ, &adapters.Mtdb{Agent: &mockAgent}, handlers.FakeCalendar{2024, 3, 2}).ServeHTTP(w, r)
 			document, err := goquery.NewDocumentFromReader(w.Body)
 			if err != nil {
 				t.Error(err)
