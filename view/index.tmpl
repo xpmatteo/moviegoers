@@ -27,11 +27,12 @@
     <div class="main">
       <h1>Movies</h1>
       <div class="grid-container" id="movieGrid">
+        {{ $nextPageUrl := printf "/?page=%d&genre=%d" $.nextPage $.selectedGenre }}
         {{  range $index, $movie := .movies }}
         <div
                 class="movie"
                 {{ if eq 19 $index }}
-                  data-hx-get="/?page={{$.nextPage}}"
+                  data-hx-get="{{ $nextPageUrl }}"
                   data-hx-trigger="revealed"
                   data-hx-swap="afterend"
                   data-hx-select="#movieGrid .movie"
@@ -47,7 +48,7 @@
         </div>
         {{ end }}
       </div>
-      <a id="moreMovies" href="/?page={{.nextPage}}">More movies...</a>
+      <a id="moreMovies" href="{{ $nextPageUrl }}">More movies...</a>
     </div>
   </div>
 </body>

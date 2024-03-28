@@ -52,7 +52,7 @@ var testCases = []struct {
 			"&primary_release_date.lte=2024-03-02",
 		returnedMovies: make([]model.Movie, 20),
 		assertions: func(t *testing.T, document *goquery.Document) {
-			assert.Equal(t, "/?page=2", attribute(document, "a#moreMovies", "href"))
+			assert.Equal(t, "/?page=2&genre=0", attribute(document, "a#moreMovies", "href"))
 		},
 	},
 	{
@@ -63,7 +63,20 @@ var testCases = []struct {
 			"&primary_release_date.lte=2024-03-02",
 		returnedMovies: make([]model.Movie, 20),
 		assertions: func(t *testing.T, document *goquery.Document) {
-			assert.Equal(t, "/?page=3", attribute(document, "a#moreMovies", "href"))
+			assert.Equal(t, "/?page=3&genre=0", attribute(document, "a#moreMovies", "href"))
+		},
+	},
+	{
+		name:        "genre specified",
+		requestPath: "/?genre=123",
+		expectedTmdbQuery: baseQuery +
+			"&with_genres=123" +
+			"&page=1" +
+			"&primary_release_date.lte=2024-03-02",
+		returnedMovies: make([]model.Movie, 20),
+		assertions: func(t *testing.T, document *goquery.Document) {
+			assert.Equal(t, "/?page=2&genre=123", attribute(document, "#movieGrid .movie:nth-of-type(20)", "data-hx-get"))
+			assert.Equal(t, "/?page=2&genre=123", attribute(document, "a#moreMovies", "href"))
 		},
 	},
 }
