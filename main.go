@@ -7,9 +7,8 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 )
-
-const port = "8080"
 
 var templ = template.Must(template.ParseFiles("view/index.tmpl"))
 
@@ -20,6 +19,8 @@ func main() {
 
 	http.Handle("GET /{$}", handlers.Index(templ, &adapters.Mtdb{Agent: http.DefaultClient}, handlers.DefaultCalendar))
 	http.Handle("GET /", http.FileServer(http.Dir("./public/")))
+
+	var port = os.Getenv("PORT")
 	log.Print("Serving HTTP from port ", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))
 }
