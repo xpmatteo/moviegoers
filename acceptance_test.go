@@ -1,5 +1,5 @@
 // This is an almost end-to-end acceptance test.
-// 
+//
 // We treat the application as an hexagon with an input port for the HTTP input request,
 // and an output port for the HTTP request we send to the MTDB.
 //

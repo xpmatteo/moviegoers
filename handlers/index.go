@@ -13,22 +13,13 @@ type MovieRepository interface {
 	Query(options model.QueryOptions) []model.Movie
 }
 
-type Calendar interface {
-	Today() time.Time
-}
-
 type CalendarFunc func() time.Time
 
-// How CalendarFunc implements Calendar
-func (f CalendarFunc) Today() time.Time {
-	return f()
+func DefaultCalendar() time.Time {
+	return time.Now()
 }
 
-var DefaultCalendar = CalendarFunc(func() time.Time {
-	return time.Now()
-})
-
-func Index(templ *template.Template, repo MovieRepository, cal Calendar) http.Handler {
+func Index(templ *template.Template, repo MovieRepository, today CalendarFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		page, err := strconv.Atoi(r.URL.Query().Get("page"))
 		if err != nil {
@@ -41,7 +32,7 @@ func Index(templ *template.Template, repo MovieRepository, cal Calendar) http.Ha
 		options := model.QueryOptions{
 			Page:           page,
 			Genre:          genre,
-			ReleaseDateMax: cal.Today(),
+			ReleaseDateMax: today(),
 		}
 		data := view.Model(repo.Query(options), options)
 		if err := templ.Execute(w, data); err != nil {

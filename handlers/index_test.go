@@ -73,9 +73,9 @@ func Test_index(t *testing.T) {
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodGet, test.url, nil)
 
-			cal := CalendarFunc(func() time.Time {
+			cal := func() time.Time {
 				return test.maxReleaseDate
-			})
+			}
 			Index(templ, repo, cal).ServeHTTP(w, r)
 
 			assert.Equal(t, test.expectedBody, w.Body.String())
