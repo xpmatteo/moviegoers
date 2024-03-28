@@ -10,6 +10,8 @@ This is an [MTDB](https://developer.themoviedb.org/docs/getting-started) client,
 The UI is inspired by [this Angular sample](https://angular-movies-a12d3.web.app/list/category/popular); most features
 are yet to be implemented, but those that are, are **faster**.
 
+The app is fully usable without JavaScript.
+
 TODO
  * Click to get movie details
  * Options: Popular, Top Rated, Upcoming (currently it's Upcoming)
