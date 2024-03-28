@@ -17,20 +17,16 @@ type Calendar interface {
 	Today() time.Time
 }
 
-type DefaultCalendar struct {
+type CalendarFunc func() time.Time
+
+// How CalendarFunc implements Calendar
+func (f CalendarFunc) Today() time.Time {
+	return f()
 }
 
-func (d DefaultCalendar) Today() time.Time {
+var DefaultCalendar = CalendarFunc(func() time.Time {
 	return time.Now()
-}
-
-type FakeCalendar struct {
-	Year, Month, Day int
-}
-
-func (f FakeCalendar) Today() time.Time {
-	return time.Date(f.Year, time.Month(f.Month), f.Day, 0, 0, 0, 0, time.UTC)
-}
+})
 
 func Index(templ *template.Template, repo MovieRepository, cal Calendar) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

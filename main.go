@@ -13,14 +13,12 @@ const port = "8080"
 
 var templ = template.Must(template.ParseFiles("view/index.tmpl"))
 
-var cal handlers.DefaultCalendar
-
 func main() {
 	if err := godotenv.Load(".env"); err != nil {
 		log.Fatalf("Error loading .env file: %s", err)
 	}
 
-	http.Handle("GET /{$}", handlers.Index(templ, &adapters.Mtdb{Agent: http.DefaultClient}, cal))
+	http.Handle("GET /{$}", handlers.Index(templ, &adapters.Mtdb{Agent: http.DefaultClient}, handlers.DefaultCalendar))
 	http.Handle("GET /", http.FileServer(http.Dir("./public/")))
 	log.Print("Serving HTTP from port ", port)
 	log.Fatal(http.ListenAndServe(":"+port, nil))

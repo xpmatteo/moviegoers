@@ -21,19 +21,12 @@ func (repo MockRepository) Query(opts model.QueryOptions) []model.Movie {
 	return repo.willReturnMovies
 }
 
-type ZC struct{}
-
-func (z ZC) Today() time.Time {
-	return time.Time{}
-}
-
-var zeroCalendar = ZC{}
-
 func Test_index(t *testing.T) {
 	tests := []struct {
 		name                 string
 		template             string
 		url                  string
+		maxReleaseDate       time.Time
 		expectedBody         string
 		expectedQueryOptions model.QueryOptions
 	}{
@@ -80,7 +73,10 @@ func Test_index(t *testing.T) {
 			w := httptest.NewRecorder()
 			r := httptest.NewRequest(http.MethodGet, test.url, nil)
 
-			Index(templ, repo, zeroCalendar).ServeHTTP(w, r)
+			cal := CalendarFunc(func() time.Time {
+				return test.maxReleaseDate
+			})
+			Index(templ, repo, cal).ServeHTTP(w, r)
 
 			assert.Equal(t, test.expectedBody, w.Body.String())
 			assert.Equal(t, test.expectedQueryOptions, passedOptions)

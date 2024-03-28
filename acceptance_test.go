@@ -14,9 +14,16 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 )
 
 const baseQuery = "include_adult=false&include_video=false&language=en-US&sort_by=popularity.desc"
+
+func FakeCalendar(Year, Month, Day int) handlers.CalendarFunc {
+	return func() time.Time {
+		return time.Date(Year, time.Month(Month), Day, 0, 0, 0, 0, time.UTC)
+	}
+}
 
 var testCases = []struct {
 	name              string
@@ -95,7 +102,7 @@ func TestEndToEnd(t *testing.T) {
 				toBeReturned:  test.returnedMovies,
 				t:             t,
 			}
-			handlers.Index(templ, &adapters.Mtdb{Agent: &mockAgent}, handlers.FakeCalendar{2024, 3, 2}).ServeHTTP(w, r)
+			handlers.Index(templ, &adapters.Mtdb{Agent: &mockAgent}, FakeCalendar(2024, 3, 2)).ServeHTTP(w, r)
 			document, err := goquery.NewDocumentFromReader(w.Body)
 			if err != nil {
 				t.Error(err)
