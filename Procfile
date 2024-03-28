@@ -1,1 +1,1 @@
-web: ./gomovies
+web: ./moviegoers
