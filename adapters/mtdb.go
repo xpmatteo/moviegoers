@@ -74,3 +74,7 @@ func (m *Mtdb) Query(opts model.QueryOptions) []model.Movie {
 
 	return data.Results
 }
+
+func NewMtdb() *Mtdb {
+	return &Mtdb{Agent: http.DefaultClient}
+}

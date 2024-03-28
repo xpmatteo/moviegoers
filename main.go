@@ -17,7 +17,8 @@ func main() {
 		log.Printf("Error loading .env file: %s", err)
 	}
 
-	http.Handle("GET /{$}", handlers.Index(templ, &adapters.Mtdb{Agent: http.DefaultClient}, handlers.DefaultCalendar))
+	mtdb := adapters.NewMemoizer(adapters.NewMtdb())
+	http.Handle("GET /{$}", handlers.Index(templ, mtdb, handlers.DefaultCalendar))
 	http.Handle("GET /", http.FileServer(http.Dir("./public/")))
 
 	var port = os.Getenv("PORT")
