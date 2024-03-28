@@ -6,6 +6,7 @@ import (
 	"html/template"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type MovieRepository interface {
@@ -23,8 +24,9 @@ func Index(templ *template.Template, repo MovieRepository) http.Handler {
 			genre = 0
 		}
 		options := model.QueryOptions{
-			Page:  page,
-			Genre: genre,
+			Page:           page,
+			Genre:          genre,
+			ReleaseDateMax: time.Now(),
 		}
 		data := view.Model(repo.Query(options), options)
 		if err := templ.Execute(w, data); err != nil {
