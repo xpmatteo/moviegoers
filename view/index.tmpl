@@ -22,10 +22,10 @@
               data-hx-push-url="true"
               data-hx-swap="innerHTML show:#main:top"
         >
-          <label><input type="radio" name="genre" value="0" {{if eq 0 $.selectedGenre}} checked="checked" {{end}}> All</label><br>
+          <label><input type="radio" name="genre" value="0" {{if eq 0 $.selectedGenre}} checked {{end}}> All</label><br>
           <br>
           {{ range .genres }}
-            <label><input type="radio" name="genre" value="{{.Id}}" {{if eq .Id $.selectedGenre}} checked="checked" {{end}}> {{.Name}}</label><br>
+            <label><input type="radio" name="genre" value="{{.Id}}" {{if eq .Id $.selectedGenre}} checked {{end}}> {{.Name}}</label><br>
           {{ end }}
           <input id="submitGenre" type="submit" value="Choose">
           <script>document.getElementById("submitGenre").style.display = "none"</script>
