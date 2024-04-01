@@ -1,4 +1,4 @@
-package view
+package web
 
 import (
 	"bytes"
@@ -6,7 +6,7 @@ import (
 	"github.com/PuerkitoBio/goquery"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/xpmatteo/gomovies/model"
+	"github.com/xpmatteo/gomovies/domain"
 	"golang.org/x/net/html"
 	"html/template"
 	"io"
@@ -16,8 +16,8 @@ import (
 
 var testCases = []struct {
 	name                   string
-	movies                 []model.Movie
-	options                model.QueryOptions
+	movies                 []domain.Movie
+	options                domain.QueryOptions
 	selector               string
 	matches                []string
 	attribute              string
@@ -25,7 +25,7 @@ var testCases = []struct {
 }{
 	{
 		name: "movie titles",
-		movies: []model.Movie{
+		movies: []domain.Movie{
 			{Title: "Foobar"},
 			{Title: "Zork"},
 			{Title: "Blah"},
@@ -35,7 +35,7 @@ var testCases = []struct {
 	},
 	{
 		name: "movie overviews",
-		movies: []model.Movie{
+		movies: []domain.Movie{
 			{Overview: "Something"},
 			{Overview: "Something else"},
 		},
@@ -44,7 +44,7 @@ var testCases = []struct {
 	},
 	{
 		name: "poster",
-		movies: []model.Movie{
+		movies: []domain.Movie{
 			{PosterPath: "foo.jpg"},
 		},
 		selector:               "#movieGrid .movie img",
@@ -53,7 +53,7 @@ var testCases = []struct {
 	},
 	{
 		name: "poster missing",
-		movies: []model.Movie{
+		movies: []domain.Movie{
 			{PosterPath: ""},
 		},
 		selector:               "#movieGrid .movie img",
@@ -66,7 +66,7 @@ func Test_allDynamicFeatures(t *testing.T) {
 	for _, test := range testCases {
 		t.Run(test.name, func(t *testing.T) {
 			if test.movies == nil {
-				test.movies = []model.Movie{}
+				test.movies = []domain.Movie{}
 			}
 			if test.matches == nil {
 				test.matches = []string{""}
@@ -135,7 +135,7 @@ func assertWellFormedHTML(t *testing.T, buf bytes.Buffer) {
 
 const indexFilename = "index.tmpl"
 
-func renderTemplate(movies []model.Movie, opts model.QueryOptions) bytes.Buffer {
+func renderTemplate(movies []domain.Movie, opts domain.QueryOptions) bytes.Buffer {
 	templ := template.Must(template.ParseFiles(indexFilename))
 	var buf bytes.Buffer
 	data := Model(movies, opts)

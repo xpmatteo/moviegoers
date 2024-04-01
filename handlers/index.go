@@ -1,8 +1,8 @@
 package handlers
 
 import (
-	"github.com/xpmatteo/gomovies/model"
-	"github.com/xpmatteo/gomovies/view"
+	"github.com/xpmatteo/gomovies/domain"
+	"github.com/xpmatteo/gomovies/web"
 	"html/template"
 	"net/http"
 	"strconv"
@@ -10,7 +10,7 @@ import (
 )
 
 type MovieRepository interface {
-	Query(options model.QueryOptions) []model.Movie
+	Query(options domain.QueryOptions) []domain.Movie
 }
 
 type CalendarFunc func() time.Time
@@ -29,12 +29,12 @@ func Index(templ *template.Template, repo MovieRepository, today CalendarFunc) h
 		if err != nil {
 			genre = 0
 		}
-		options := model.QueryOptions{
+		options := domain.QueryOptions{
 			Page:           page,
 			Genre:          genre,
 			ReleaseDateMax: today(),
 		}
-		data := view.Model(repo.Query(options), options)
+		data := web.Model(repo.Query(options), options)
 		if err := templ.Execute(w, data); err != nil {
 			panic(err)
 		}

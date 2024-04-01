@@ -1,4 +1,4 @@
-package model
+package domain
 
 var Genres = []struct {
 	Id   int

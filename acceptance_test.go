@@ -16,9 +16,9 @@ import (
 	"encoding/json"
 	"github.com/PuerkitoBio/goquery"
 	"github.com/stretchr/testify/assert"
-	"github.com/xpmatteo/gomovies/adapters"
+	"github.com/xpmatteo/gomovies/domain"
 	"github.com/xpmatteo/gomovies/handlers"
-	"github.com/xpmatteo/gomovies/model"
+	"github.com/xpmatteo/gomovies/mtdb"
 	"html/template"
 	"io"
 	"net/http"
@@ -41,7 +41,7 @@ var testCases = []struct {
 	name              string
 	requestPath       string
 	expectedTmdbQuery string
-	returnedMovies    []model.Movie
+	returnedMovies    []domain.Movie
 	assertions        func(*testing.T, *goquery.Document)
 }{
 	{
@@ -50,7 +50,7 @@ var testCases = []struct {
 		expectedTmdbQuery: baseQuery +
 			"&page=1" +
 			"&primary_release_date.lte=2024-03-02",
-		returnedMovies: make([]model.Movie, 20),
+		returnedMovies: make([]domain.Movie, 20),
 		assertions: func(t *testing.T, document *goquery.Document) {
 			assert.Equal(t, "/?page=2&genre=0", attribute(document, "a#moreMovies", "href"))
 		},
@@ -61,7 +61,7 @@ var testCases = []struct {
 		expectedTmdbQuery: baseQuery +
 			"&page=2" +
 			"&primary_release_date.lte=2024-03-02",
-		returnedMovies: make([]model.Movie, 20),
+		returnedMovies: make([]domain.Movie, 20),
 		assertions: func(t *testing.T, document *goquery.Document) {
 			assert.Equal(t, "/?page=3&genre=0", attribute(document, "a#moreMovies", "href"))
 		},
@@ -73,7 +73,7 @@ var testCases = []struct {
 			"&with_genres=35" +
 			"&page=1" +
 			"&primary_release_date.lte=2024-03-02",
-		returnedMovies: make([]model.Movie, 20),
+		returnedMovies: make([]domain.Movie, 20),
 		assertions: func(t *testing.T, document *goquery.Document) {
 			assert.Equal(t, "/?page=2&genre=35", attribute(document, "#movieGrid .movie:nth-of-type(20)", "data-hx-get"))
 			assert.Equal(t, "/?page=2&genre=35", attribute(document, "a#moreMovies", "href"))
@@ -88,7 +88,7 @@ var testCases = []struct {
 		expectedTmdbQuery: baseQuery +
 			"&page=1" +
 			"&primary_release_date.lte=2024-03-02",
-		returnedMovies: make([]model.Movie, 20),
+		returnedMovies: make([]domain.Movie, 20),
 		assertions: func(t *testing.T, document *goquery.Document) {
 			assert.Equal(t, "/?page=2&genre=0", attribute(document, "#movieGrid .movie:nth-of-type(20)", "data-hx-get"))
 			assert.Equal(t, "/?page=2&genre=0", attribute(document, "a#moreMovies", "href"))
@@ -118,7 +118,7 @@ func attributePresent(document *goquery.Document, selector, attribute string) bo
 // passing to the real MTDB, and returns the json for an arbitrary set of Movies
 type mockMtdb struct {
 	expectedQuery string
-	toBeReturned  []model.Movie
+	toBeReturned  []domain.Movie
 	t             *testing.T
 }
 
@@ -127,7 +127,7 @@ func (m mockMtdb) Do(req *http.Request) (*http.Response, error) {
 	assert.Equal(m.t, "/3/discover/movie", req.URL.Path)
 	assert.Equal(m.t, m.expectedQuery, req.URL.RawQuery)
 	var data = struct {
-		Results []model.Movie `json:"Results"`
+		Results []domain.Movie `json:"Results"`
 	}{m.toBeReturned}
 	body, err := json.Marshal(data)
 	if err != nil {
@@ -142,7 +142,7 @@ func (m mockMtdb) Do(req *http.Request) (*http.Response, error) {
 }
 
 func TestEndToEnd(t *testing.T) {
-	var templ = template.Must(template.ParseFiles("view/index.tmpl"))
+	var templ = template.Must(template.ParseFiles("web/index.tmpl"))
 	if err := os.Setenv("TMDB_ACCESS_TOKEN", "anything"); err != nil {
 		panic(err)
 	}
@@ -155,7 +155,7 @@ func TestEndToEnd(t *testing.T) {
 				toBeReturned:  test.returnedMovies,
 				t:             t,
 			}
-			handlers.Index(templ, &adapters.Mtdb{Agent: &mockAgent}, FakeCalendar(2024, 3, 2)).ServeHTTP(w, r)
+			handlers.Index(templ, &mtdb.Mtdb{Agent: &mockAgent}, FakeCalendar(2024, 3, 2)).ServeHTTP(w, r)
 			document, err := goquery.NewDocumentFromReader(w.Body)
 			if err != nil {
 				t.Error(err)

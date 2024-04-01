@@ -1,4 +1,4 @@
-package model
+package domain
 
 type Movie struct {
 	Title      string `json:"title"`

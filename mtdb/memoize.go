@@ -1,16 +1,16 @@
-package adapters
+package mtdb
 
 import (
-	"github.com/xpmatteo/gomovies/model"
+	"github.com/xpmatteo/gomovies/domain"
 	"log"
 )
 
 type Memoizer struct {
 	Mtdb  *Mtdb
-	pages map[string][]model.Movie
+	pages map[string][]domain.Movie
 }
 
-func (m *Memoizer) Query(opts model.QueryOptions) []model.Movie {
+func (m *Memoizer) Query(opts domain.QueryOptions) []domain.Movie {
 	url := QueryString(opts)
 	movies, ok := m.pages[url]
 	if !ok {
@@ -24,6 +24,6 @@ func (m *Memoizer) Query(opts model.QueryOptions) []model.Movie {
 func NewMemoizer(m *Mtdb) *Memoizer {
 	return &Memoizer{
 		Mtdb:  m,
-		pages: make(map[string][]model.Movie),
+		pages: make(map[string][]domain.Movie),
 	}
 }

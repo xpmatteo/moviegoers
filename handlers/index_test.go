@@ -2,7 +2,7 @@ package handlers
 
 import (
 	"github.com/stretchr/testify/assert"
-	"github.com/xpmatteo/gomovies/model"
+	"github.com/xpmatteo/gomovies/domain"
 	"html/template"
 	"net/http"
 	"net/http/httptest"
@@ -11,12 +11,12 @@ import (
 )
 
 type MockRepository struct {
-	willReturnMovies []model.Movie
+	willReturnMovies []domain.Movie
 }
 
-var passedOptions model.QueryOptions
+var passedOptions domain.QueryOptions
 
-func (repo MockRepository) Query(opts model.QueryOptions) []model.Movie {
+func (repo MockRepository) Query(opts domain.QueryOptions) []domain.Movie {
 	passedOptions = opts
 	return repo.willReturnMovies
 }
@@ -28,42 +28,42 @@ func Test_index(t *testing.T) {
 		url                  string
 		maxReleaseDate       time.Time
 		expectedBody         string
-		expectedQueryOptions model.QueryOptions
+		expectedQueryOptions domain.QueryOptions
 	}{
 		{
 			name:                 "movies",
 			template:             "{{ .movies }}",
 			url:                  "/",
 			expectedBody:         "[]",
-			expectedQueryOptions: model.QueryOptions{Page: 1},
+			expectedQueryOptions: domain.QueryOptions{Page: 1},
 		},
 		{
 			name:                 "nextPage",
 			template:             "{{.nextPage}}",
 			url:                  "/?page=7",
 			expectedBody:         "8",
-			expectedQueryOptions: model.QueryOptions{Page: 7},
+			expectedQueryOptions: domain.QueryOptions{Page: 7},
 		},
 		{
 			name:                 "nextPage default",
 			template:             "{{.nextPage}}",
 			url:                  "/",
 			expectedBody:         "2",
-			expectedQueryOptions: model.QueryOptions{Page: 1},
+			expectedQueryOptions: domain.QueryOptions{Page: 1},
 		},
 		{
 			name:                 "genre",
 			template:             "{{.selectedGenre}}",
 			url:                  "/?genre=123",
 			expectedBody:         "123",
-			expectedQueryOptions: model.QueryOptions{Page: 1, Genre: 123},
+			expectedQueryOptions: domain.QueryOptions{Page: 1, Genre: 123},
 		},
 		{
 			name:                 "genre default",
 			template:             "{{.selectedGenre}}",
 			url:                  "/",
 			expectedBody:         "0",
-			expectedQueryOptions: model.QueryOptions{Page: 1, Genre: 0},
+			expectedQueryOptions: domain.QueryOptions{Page: 1, Genre: 0},
 		},
 	}
 	for _, test := range tests {

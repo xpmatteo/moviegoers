@@ -2,22 +2,22 @@ package main
 
 import (
 	"github.com/joho/godotenv"
-	"github.com/xpmatteo/gomovies/adapters"
 	"github.com/xpmatteo/gomovies/handlers"
+	"github.com/xpmatteo/gomovies/mtdb"
 	"html/template"
 	"log"
 	"net/http"
 	"os"
 )
 
-var templ = template.Must(template.ParseFiles("view/index.tmpl"))
+var templ = template.Must(template.ParseFiles("web/index.tmpl"))
 
 func main() {
 	if err := godotenv.Load(".env"); err != nil {
 		log.Printf("Error loading .env file: %s", err)
 	}
 
-	mtdb := adapters.NewMemoizer(adapters.NewMtdb())
+	mtdb := mtdb.NewMemoizer(mtdb.NewMtdb())
 	http.Handle("GET /{$}", handlers.Index(templ, mtdb, handlers.DefaultCalendar))
 	http.Handle("GET /", http.FileServer(http.Dir("./public/")))
 

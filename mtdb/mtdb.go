@@ -1,9 +1,9 @@
-package adapters
+package mtdb
 
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/xpmatteo/gomovies/model"
+	"github.com/xpmatteo/gomovies/domain"
 	"io"
 	"log"
 	"net/http"
@@ -19,7 +19,7 @@ type Mtdb struct {
 	Agent HttpAgent
 }
 
-func QueryString(o model.QueryOptions) string {
+func QueryString(o domain.QueryOptions) string {
 	params := make([]string, 0)
 	if o.Genre != 0 {
 		params = append(params, fmt.Sprintf("with_genres=%d", o.Genre))
@@ -37,7 +37,7 @@ func QueryString(o model.QueryOptions) string {
 	return strings.Join(params, "&")
 }
 
-func (m *Mtdb) Query(opts model.QueryOptions) []model.Movie {
+func (m *Mtdb) Query(opts domain.QueryOptions) []domain.Movie {
 	apiKey := os.Getenv("TMDB_ACCESS_TOKEN")
 	if apiKey == "" {
 		panic("missing env var TMDB_ACCESS_TOKEN")
@@ -65,7 +65,7 @@ func (m *Mtdb) Query(opts model.QueryOptions) []model.Movie {
 	}
 
 	var data struct {
-		Results []model.Movie `json:"Results"`
+		Results []domain.Movie `json:"Results"`
 	}
 	err = json.Unmarshal(bytes, &data)
 	if err != nil {
