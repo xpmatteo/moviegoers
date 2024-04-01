@@ -5,3 +5,7 @@ type Movie struct {
 	Overview   string `json:"overview"`
 	PosterPath string `json:"poster_path"`
 }
+
+type MovieRepository interface {
+	Query(options QueryOptions) []Movie
+}

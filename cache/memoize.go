@@ -7,12 +7,8 @@ import (
 	"time"
 )
 
-type MovieRepository interface {
-	Query(domain.QueryOptions) []domain.Movie
-}
-
 type Memoizer struct {
-	repository MovieRepository
+	repository domain.MovieRepository
 	cache      *cache.Cache
 }
 
@@ -26,7 +22,7 @@ func (m *Memoizer) Query(opts domain.QueryOptions) []domain.Movie {
 	return movies.([]domain.Movie)
 }
 
-func NewMemoizer(q MovieRepository) *Memoizer {
+func NewMemoizer(q domain.MovieRepository) *Memoizer {
 	return &Memoizer{
 		repository: q,
 		cache:      cache.New(60*time.Minute, 60*time.Minute),

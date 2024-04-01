@@ -9,17 +9,13 @@ import (
 	"time"
 )
 
-type MovieRepository interface {
-	Query(options domain.QueryOptions) []domain.Movie
-}
-
 type CalendarFunc func() time.Time
 
 func DefaultCalendar() time.Time {
 	return time.Now()
 }
 
-func Index(templ *template.Template, repo MovieRepository, today CalendarFunc) http.Handler {
+func Index(templ *template.Template, repo domain.MovieRepository, today CalendarFunc) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		page, err := strconv.Atoi(r.URL.Query().Get("page"))
 		if err != nil {
